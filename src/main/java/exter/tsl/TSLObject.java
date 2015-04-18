@@ -155,12 +155,57 @@ public class TSLObject
   }
 
   /**
+   * Puts an char represented as a string.
+   * @throws IllegalArugmentException if the name is invalid.
+   * @param name Name of the string.
+   * @param value Value to put.
+   */
+  public void putString(String name, char value)
+  {
+    putString(name,String.valueOf(value));
+  }
+
+  /**
+   * Puts a byte represented as a string.
+   * @throws IllegalArugmentException if the name is invalid.
+   * @param name Name of the string.
+   * @param value Value to put.
+   */
+  public void putString(String name, byte value)
+  {
+    putString(name,String.valueOf(value));
+  }
+  
+  /**
+   * Puts a short represented as a string.
+   * @throws IllegalArugmentException if the name is invalid.
+   * @param name Name of the string.
+   * @param value Value to put.
+   */
+  public void putString(String name, short value)
+  {
+    putString(name,String.valueOf(value));
+  }
+
+  /**
    * Puts an integer represented as a string.
    * @throws IllegalArugmentException if the name is invalid.
    * @param name Name of the string.
    * @param value Value to put.
    */
   public void putString(String name, int value)
+  {
+    putString(name,String.valueOf(value));
+  }
+
+
+  /**
+   * Puts an long represented as a string.
+   * @throws IllegalArugmentException if the name is invalid.
+   * @param name Name of the string.
+   * @param value Value to put.
+   */
+  public void putString(String name, long value)
   {
     putString(name,String.valueOf(value));
   }
@@ -203,18 +248,18 @@ public class TSLObject
    * @throws IllegalArugmentException if the name is invalid.
    * @param obj Object to put.
    */
-  public void putObject(String name,TSLObject collection)
+  public void putObject(String name,TSLObject obj)
   {
     TSLUtil.validateValueName(name);
     List<TSLObject> list = objects_map.get(name);
     if(list == null)
     {
       list = new ArrayList<TSLObject>();
-      list.add(collection);
+      list.add(obj);
       objects_map.put(name, list);
     } else
     {
-      list.add(collection);
+      list.add(obj);
     }
   }
 
@@ -345,6 +390,74 @@ public class TSLObject
   }
 
   /**
+   * Gets a string, converted to a char.
+   * If multiple instances exists, the first instance is returned.
+   * @param name Name of the string.
+   * @param def Default value.
+   * @return String as a char, defualt if not found, or the string is not a single character.
+   */
+  public char getStringAsChar(String name, char def)
+  {
+    List<String> value_list = strings_map.get(name);
+    if(value_list == null)
+    {
+      return def;
+    }
+    String value = value_list.get(0);
+    if(value.length() != 1)
+    {
+      return def;
+    }
+    return value.charAt(0);
+  }
+
+  /**
+   * Gets a string, converted to a byte.
+   * If multiple instances exists, the first instance is returned.
+   * @param name Name of the string.
+   * @param def Default value.
+   * @return String as a byte, defualt if not found, or not a valid integer.
+   */
+  public byte getStringAsByte(String name, byte def)
+  {
+    List<String> value_list = strings_map.get(name);
+    if(value_list == null)
+    {
+      return def;
+    }
+    try
+    {
+      return Byte.valueOf(value_list.get(0));
+    } catch(NumberFormatException e)
+    {
+      return def;
+    }
+  }
+
+  /**
+   * Gets a string, converted to a short.
+   * If multiple instances exists, the first instance is returned.
+   * @param name Name of the string.
+   * @param def Default value.
+   * @return String as a short, defualt if not found, or not a valid integer.
+   */
+  public short getStringAsShort(String name, short def)
+  {
+    List<String> value_list = strings_map.get(name);
+    if(value_list == null)
+    {
+      return def;
+    }
+    try
+    {
+      return Short.valueOf(value_list.get(0));
+    } catch(NumberFormatException e)
+    {
+      return def;
+    }
+  }
+  
+  /**
    * Gets a string, converted to an int.
    * If multiple instances exists, the first instance is returned.
    * @param name Name of the string.
@@ -367,6 +480,29 @@ public class TSLObject
     }
   }
 
+  /**
+   * Gets a string, converted to a long.
+   * If multiple instances exists, the first instance is returned.
+   * @param name Name of the string.
+   * @param def Default value.
+   * @return String as a long, defualt if not found, or not a valid integer.
+   */
+  public long getStringAsLong(String name, long def)
+  {
+    List<String> value_list = strings_map.get(name);
+    if(value_list == null)
+    {
+      return def;
+    }
+    try
+    {
+      return Long.valueOf(value_list.get(0));
+    } catch(NumberFormatException e)
+    {
+      return def;
+    }
+  }
+  
   /**
    * Gets a string, converted to a float.
    * If multiple instances exists, the first instance is returned.
@@ -438,6 +574,60 @@ public class TSLObject
 
   
   /**
+   * Gets all strings of the same name as a Byte ArrayList.
+   * Values that are not valid Bytes are skipped.
+   * @param name Name of the value.
+   * @return Values as Byte ArrayList.
+   */
+  public ArrayList<Byte> getStringAsByteList(String name)
+  {
+    List<String> value_list = strings_map.get(name);
+    ArrayList<Byte> result = new ArrayList<Byte>();
+    if(value_list == null)
+    {
+      return result;
+    }
+    
+    for(String val:value_list)
+    {
+      try
+      {
+        result.add(Byte.valueOf(val));
+      } catch(NumberFormatException e)
+      {
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Gets all strings of the same name as a Short ArrayList.
+   * Values that are not valid Shorts are skipped.
+   * @param name Name of the value.
+   * @return Values as Short ArrayList.
+   */
+  public ArrayList<Short> getStringAsShortList(String name)
+  {
+    List<String> value_list = strings_map.get(name);
+    ArrayList<Short> result = new ArrayList<Short>();
+    if(value_list == null)
+    {
+      return result;
+    }
+    
+    for(String val:value_list)
+    {
+      try
+      {
+        result.add(Short.valueOf(val));
+      } catch(NumberFormatException e)
+      {
+      }
+    }
+    return result;
+  }
+  
+  /**
    * Gets all strings of the same name as an Integer ArrayList.
    * Values that are not valid Integers are skipped.
    * @param name Name of the value.
@@ -464,6 +654,33 @@ public class TSLObject
     return result;
   }
 
+  /**
+   * Gets all strings of the same name as a Long ArrayList.
+   * Values that are not valid Longs are skipped.
+   * @param name Name of the value.
+   * @return Values as Long ArrayList.
+   */
+  public ArrayList<Long> getStringAsLongList(String name)
+  {
+    List<String> value_list = strings_map.get(name);
+    ArrayList<Long> result = new ArrayList<Long>();
+    if(value_list == null)
+    {
+      return result;
+    }
+    
+    for(String val:value_list)
+    {
+      try
+      {
+        result.add(Long.valueOf(val));
+      } catch(NumberFormatException e)
+      {
+      }
+    }
+    return result;
+  }
+  
   /**
    * Gets all strings of the same name as a Float ArrayList.
    * Values that are not valid Floats are skipped.
